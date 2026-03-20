@@ -26,22 +26,25 @@
         <div id="word-area" style="display:none; text-align: center;">
             <div id="word-display" style="font-size: 5rem; margin-bottom: 20px;"></div>
             <div id="translation-display" style="font-size: 2rem; color: #666; margin-bottom: 20px;"></div>
-            <input type="text" id="input-box" autocomplete="off" style="font-size: 2rem; padding: 10px; border-radius: 10px;">
+            <input type="text" id="input-box" autocomplete="off" style="font-size: 2rem; padding: 10px; border-radius: 10px;" inputmode="none">
         </div>
     </div>
 
     <script type="module">
+        // 加上 .js 副檔名是 GitHub Pages 能跑的關鍵
         import { initEngine, startMode } from './gameEngine.js';
         import { toggleSidebar } from './uiController.js';
 
         // 初始化
         initEngine();
+
+        // 綁定事件 (這比 onclick 穩 100 倍)
         document.getElementById('menuBtn').addEventListener('click', toggleSidebar);
-        
-        // 綁定按鈕
         document.getElementById('easyBtn').addEventListener('click', () => startMode('easy'));
         document.getElementById('normalBtn').addEventListener('click', () => startMode('normal'));
         document.getElementById('hardBtn').addEventListener('click', () => startMode('hard'));
+
+        console.log("小亞諾系統已完全載入");
     </script>
 </body>
 </html>
