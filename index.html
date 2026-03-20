@@ -1,12 +1,38 @@
-export const dictionary = {
-    "act": "行動", "add": "增加", "age": "年紀", "ago": "以前", "air": "空氣", "all": "全部", "and": "和",
-    "Apple": "蘋果", "Banana": "香蕉", "Orange": "橘子", "Mother": "母親", "Father": "父親",
-    "Beautiful": "美麗的", "Different": "不同的", "Dangerous": "危險的", "Excellent": "傑出的"
-    // 請依此格式補齊 1500 字...
-};
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小亞諾英文單字王</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <button class="menu-toggle" id="menuBtn">☰</button>
+    <div id="sidebar">
+        <div class="sidebar-header"><span>🐳 冒險選單</span></div>
+        <div class="sidebar-content">
+            <button class="btn" onclick="startMode('easy')">🌱 簡單模式</button>
+            <button class="btn" onclick="startMode('normal')">🌿 基礎模式</button>
+            <button class="btn" onclick="startMode('hard')">🌳 困難模式</button>
+        </div>
+    </div>
+    <div id="main-view">
+        <div id="home-logo">
+            <div class="logo-icon">🐋</div>
+            <div class="logo-text">小亞諾英文單字王</div>
+        </div>
+        <div id="word-area" style="display:none;">
+            <div id="word-display"></div>
+            <div id="translation-display"></div>
+            <input type="text" id="input-box" autocomplete="off" inputmode="none">
+        </div>
+    </div>
 
-export const dict = {
-    easy: ["act", "add", "age", "ago", "air", "all", "and"],
-    normal: ["Apple", "Banana", "Orange", "Mother", "Father"],
-    hard: ["Beautiful", "Different", "Dangerous", "Excellent"]
-};
+    <script type="module">
+        import { init } from './gameEngine.js';
+        import { toggleSidebar } from './uiController.js';
+        document.getElementById('menuBtn').onclick = toggleSidebar;
+        init(); // 啟動遊戲引擎
+    </script>
+</body>
+</html>
