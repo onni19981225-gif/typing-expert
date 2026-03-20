@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>小亞諾英文單字王</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <button class="menu-toggle" id="menuBtn">☰</button>
+    <div id="sidebar">
+        <div class="sidebar-header">
+            <span style="font-weight: bold; color: var(--primary);">🐳 冒險選單</span>
+            <span class="home-icon-btn" onclick="location.reload()">🏠</span>
+        </div>
+        <div class="sidebar-content">
+            <button class="btn" id="easyBtn">🌱 簡單模式</button>
+            <button class="btn" id="normalBtn">🌿 基礎模式</button>
+            <button class="btn" id="hardBtn">🌳 困難模式</button>
+        </div>
+    </div>
+    <div id="main-view">
+        <div id="top-info-bar">
+            <div id="timer-display">時間：--:--</div>
+            <div id="counter-display">正確：0</div>
+        </div>
+        <div id="home-logo">
+            <div class="logo-icon">🐋</div>
+            <div class="logo-text">小亞諾英文單字王</div>
+        </div>
+        <div id="word-area" style="display:none;">
+            <div id="word-display">READY?</div>
+            <div id="translation-display"></div>
+            <input type="text" id="input-box" placeholder="點我開始" autocomplete="off" inputmode="none">
+        </div>
+    </div>
+    <div id="result-layer">
+        <h2 style="font-size:3rem;">挑戰結束！</h2>
+        <div id="result-detail" style="font-size:1.5rem; margin-bottom:20px;"></div>
+        <button class="btn" onclick="location.reload()" style="width:200px;">回首頁</button>
+    </div>
+
+    <script type="module">
+        import * as Game from './gameEngine.js';
+        import { toggleSidebar } from './uiController.js';
+
+        Game.init();
+        document.getElementById('menuBtn').onclick = toggleSidebar;
+        document.getElementById('easyBtn').onclick = () => { toggleSidebar(); Game.startRandom('easy', 1); };
+        document.getElementById('normalBtn').onclick = () => { toggleSidebar(); Game.startRandom('normal', 1); };
+        document.getElementById('hardBtn').onclick = () => { toggleSidebar(); Game.startRandom('hard', 1); };
+    </script>
+</body>
+</html>
