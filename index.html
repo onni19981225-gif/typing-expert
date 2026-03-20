@@ -2,49 +2,123 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>小亞諾英文單字王</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <button class="menu-toggle" id="menuBtn">☰</button>
-    
+
     <div id="sidebar">
-        <div class="sidebar-header"><span style="font-weight: bold; color: var(--primary);">🐳 冒險選單</span></div>
+        <div class="sidebar-header">
+            <span style="font-weight: bold; color: var(--primary);">🐳 冒險選單</span>
+            <span class="home-icon-btn" onclick="location.reload()">🏠</span>
+        </div>
         <div class="sidebar-content">
+            <div style="color:#BBB; font-size:0.8rem;">找字母練習</div>
+            <button class="btn" style="background: var(--accent);" id="beginnerBtn">⌨️ 初心者模式</button>
+            <div style="color:#BBB; font-size:0.8rem;">單字挑戰</div>
             <button class="btn" id="easyBtn">🌱 簡單模式</button>
             <button class="btn" id="normalBtn">🌿 基礎模式</button>
             <button class="btn" id="hardBtn">🌳 困難模式</button>
+            <div style="color:#BBB; font-size:0.8rem;">個人化學習</div>
+            <button class="btn" style="background: #E2F0CB;" id="customModalBtn">✏️ 自訂單字庫</button>
         </div>
     </div>
 
     <div id="main-view">
+        <div id="top-info-bar">
+            <div id="total-progress-container"><div id="total-progress-bar"></div></div>
+            <div id="timer-display">時間：--:--</div>
+            <div id="counter-display">正確：0</div>
+        </div>
+
         <div id="home-logo">
             <div class="logo-icon">🐋</div>
             <div class="logo-text">小亞諾英文單字王</div>
+            <p style="color: #5D8AA8; font-size: 1.5rem; margin-top: 20px; font-weight: bold;">點擊左上角 ☰ 開始練習吧！</p>
         </div>
-        <div id="word-area" style="display:none; text-align: center;">
-            <div id="word-display" style="font-size: 5rem; margin-bottom: 20px;"></div>
-            <div id="translation-display" style="font-size: 2rem; color: #666; margin-bottom: 20px;"></div>
-            <input type="text" id="input-box" autocomplete="off" style="font-size: 2rem; padding: 10px; border-radius: 10px;" inputmode="none">
+
+        <div id="pre-game-start">
+            <h1 id="pre-title" style="color: var(--primary); font-size: 3rem;"></h1>
+            <p id="pre-desc" style="font-size: 1.2rem; color: #888;"></p>
+            <button class="btn" style="width: 200px; font-size: 1.5rem;" id="actualStartBtn">出發！</button>
+        </div>
+
+        <div id="word-area">
+            <div id="word-display">READY?</div>
+            <div id="translation-display"></div>
+            <div style="display: flex; align-items: center; gap: 20px; justify-content: center;">
+                <input type="text" id="input-box" placeholder="點我開始" autocomplete="off" inputmode="none">
+                <span style="font-size: 3.5rem; cursor: pointer; user-select: none;" id="speakBtn">🔊</span>
+            </div>
+            <div id="progress-text" style="margin-top: 25px; font-weight: bold; font-size: 1.5rem; color: #888;"></div>
+        </div>
+
+        <div id="keyboard-area">
+            <h1 id="kb-target" style="font-size: 6rem; color: #FF4D4D; margin-top: 0; margin-bottom: 20px;">?</h1>
+            <div class="keyboard" id="virtual-keyboard"></div>
         </div>
     </div>
 
-    <script type="module">
-        // 加上 .js 副檔名是 GitHub Pages 能跑的關鍵
-        import { initEngine, startMode } from './gameEngine.js';
-        import { toggleSidebar } from './uiController.js';
+    <div id="random-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="random-title" style="color: var(--primary); font-size: 2rem; margin-top: 0;">模式</h3>
+            <p style="font-size: 1.3rem; font-weight: bold; color: #666;">設定時間 (分鐘)：<br><br>
+                <input type="number" id="random-minutes" value="1" min="1" max="60" style="width:80px; font-size:1.8rem; text-align:center;">
+            </p>
+            <button class="btn" style="margin-top: 15px;" id="confirmRandomBtn">準備好了！</button>
+            <button class="btn" style="background:#eee; margin-top:10px; color: #888; box-shadow: 0 4px 0 #ccc;" id="hideRandomBtn">關閉</button>
+        </div>
+    </div>
+    
+    <div id="custom-modal" class="modal">
+        <div class="modal-content">
+            <h3 style="color: var(--primary); font-size: 1.8rem; margin-top: 0;">✏️ 自訂單字庫管理</h3>
+            <div id="list-creation-area">
+                <input type="text" id="new-list-name" placeholder="清單名稱 (如：第五課單字)" style="width:90%; padding:10px; margin-bottom:12px; border-radius:10px; border:2px solid var(--primary); font-size: 1rem; font-family: inherit;">
+                <div id="custom-rows-container" style="max-height: 220px; overflow-y: auto; margin-bottom:12px; border: 1px solid #eee; padding: 10px; border-radius: 12px; background: #fafafa;">
+                    <div class="word-row">
+                        <input type="text" class="eng-in" placeholder="英文">
+                        <input type="text" class="chi-in" placeholder="中文">
+                        <button class="row-del-btn" style="border:none; background:none; cursor:pointer; color:#999;">❌</button>
+                    </div>
+                </div>
+                <button class="btn" style="background: #E2F0CB; font-size: 0.9rem; padding: 10px;" id="addRowBtn">➕ 新增一列</button>
+                <button class="btn" style="margin-top: 5px;" id="saveListBtn">💾 儲存這份單字清單</button>
+            </div>
+            <hr style="margin: 15px 0; border: 0.5px solid #eee;">
+            <h4 style="color: #666;">我的收藏清單</h4>
+            <div id="saved-lists-display" style="max-height: 150px; overflow-y: auto; text-align: left;"></div>
+            <button class="btn" style="background:#eee; margin-top:15px; padding: 10px; color: #888; box-shadow: 0 4px 0 #ccc;" id="hideCustomBtn">關閉視窗</button>
+        </div>
+    </div>
 
-        // 初始化
-        initEngine();
+    <div id="mode-select-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="selected-list-title" style="color: var(--primary); font-size: 1.8rem; margin-top: 0;">清單名稱</h3>
+            <div style="margin: 20px 0; font-size: 1.2rem; font-weight: bold; color: #666;">
+                設定練習次數：<input type="number" id="custom-repeat-count" value="1" min="1" style="width:70px; text-align:center; font-size: 1.2rem;">
+            </div>
+            <button class="btn" id="customPracticeBtn">📖 基礎練習 </button>
+            <button class="btn" style="background: var(--accent); color: #855b3f; box-shadow: 0 4px 0 #e6c5ae;" id="customTestBtn">📝 拼字練習 </button>
+            <button class="btn" style="background: #D2E8F7; color: #3B7FB9; box-shadow: 0 4px 0 #B2CDDE;" id="customExamBtn">🎓 考試模式 </button>
+            <button class="btn" style="background:#eee; margin-top:10px; color: #888; box-shadow: 0 4px 0 #ccc;" id="closeModeSelectBtn">取消</button>
+        </div>
+    </div>
 
-        // 綁定事件 (這比 onclick 穩 100 倍)
-        document.getElementById('menuBtn').addEventListener('click', toggleSidebar);
-        document.getElementById('easyBtn').addEventListener('click', () => startMode('easy'));
-        document.getElementById('normalBtn').addEventListener('click', () => startMode('normal'));
-        document.getElementById('hardBtn').addEventListener('click', () => startMode('hard'));
+    <div id="result-layer">
+        <h1 style="font-size:6rem; margin:0;">🏁</h1>
+        <h2 id="result-title" style="color: var(--primary); font-size: 2.5rem;">挑戰結束！</h2>
+        <div id="result-detail" style="font-size:1.6rem; line-height:2; margin-bottom:10px; font-weight: bold; color: #555;"></div>
+        <div id="exam-results-box" style="display:none;"></div>
+        <div style="display:flex; gap:15px; flex-wrap: wrap; justify-content: center;">
+            <button class="btn" style="width:180px;" id="retryBtn">再挑戰一次</button>
+            <button id="re-test-errors-btn" class="btn" style="width:180px; background: var(--accent); display:none;">僅測驗錯題</button>
+            <button class="btn" style="width:180px; background:#ddd; color: #666; box-shadow: 0 4px 0 #bbb;" onclick="location.reload()">回到主畫面</button>
+        </div>
+    </div>
 
-        console.log("小亞諾系統已完全載入");
-    </script>
+    <script type="module" src="gameEngine.js"></script>
 </body>
 </html>
