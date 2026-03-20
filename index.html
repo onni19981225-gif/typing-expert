@@ -8,31 +8,40 @@
 </head>
 <body>
     <button class="menu-toggle" id="menuBtn">☰</button>
+    
     <div id="sidebar">
-        <div class="sidebar-header"><span>🐳 冒險選單</span></div>
+        <div class="sidebar-header"><span style="font-weight: bold; color: var(--primary);">🐳 冒險選單</span></div>
         <div class="sidebar-content">
-            <button class="btn" onclick="startMode('easy')">🌱 簡單模式</button>
-            <button class="btn" onclick="startMode('normal')">🌿 基礎模式</button>
-            <button class="btn" onclick="startMode('hard')">🌳 困難模式</button>
+            <button class="btn" id="easyBtn">🌱 簡單模式</button>
+            <button class="btn" id="normalBtn">🌿 基礎模式</button>
+            <button class="btn" id="hardBtn">🌳 困難模式</button>
         </div>
     </div>
+
     <div id="main-view">
         <div id="home-logo">
             <div class="logo-icon">🐋</div>
             <div class="logo-text">小亞諾英文單字王</div>
         </div>
-        <div id="word-area" style="display:none;">
-            <div id="word-display"></div>
-            <div id="translation-display"></div>
-            <input type="text" id="input-box" autocomplete="off" inputmode="none">
+        <div id="word-area" style="display:none; text-align: center;">
+            <div id="word-display" style="font-size: 5rem; margin-bottom: 20px;"></div>
+            <div id="translation-display" style="font-size: 2rem; color: #666; margin-bottom: 20px;"></div>
+            <input type="text" id="input-box" autocomplete="off" style="font-size: 2rem; padding: 10px; border-radius: 10px;">
         </div>
     </div>
 
     <script type="module">
-        import { init } from './gameEngine.js';
+        import { initEngine, startMode } from './gameEngine.js';
         import { toggleSidebar } from './uiController.js';
-        document.getElementById('menuBtn').onclick = toggleSidebar;
-        init(); // 啟動遊戲引擎
+
+        // 初始化
+        initEngine();
+        document.getElementById('menuBtn').addEventListener('click', toggleSidebar);
+        
+        // 綁定按鈕
+        document.getElementById('easyBtn').addEventListener('click', () => startMode('easy'));
+        document.getElementById('normalBtn').addEventListener('click', () => startMode('normal'));
+        document.getElementById('hardBtn').addEventListener('click', () => startMode('hard'));
     </script>
 </body>
 </html>
