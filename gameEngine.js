@@ -3,37 +3,37 @@ import * as UI from './uiController.js';
 
 export let state = {
     active: false, mode: '', subMode: '', currentList: [], currentIndex: 0, score: 0,
-    timeLeft: 0, timer: null, testMode: false, examMode: false, examErrors: [], customData: {}
+    testMode: false, examMode: false, tempDictionary: {}
 };
 
 export function init() {
-    const saved = localStorage.getItem('user_custom_lists');
-    if(saved) state.customData = JSON.parse(saved);
-    setupListeners();
+    setupInputListeners();
+    // 將啟動函式掛載到 window，解決 HTML 無法讀取 import 函式的問題
+    window.startMode = startMode; 
 }
 
-function setupListeners() {
+function setupInputListeners() {
     const input = document.getElementById('input-box');
     input.addEventListener('input', () => {
         if(!state.active) return;
         input.value = input.value.replace(/[^a-zA-Z0-9\s\-\'\.\,]/g, '');
         render();
     });
-
-    input.addEventListener('keydown', (e) => {
-        if(!state.active || state.examMode || e.key === 'Backspace' || e.key === 'Enter') return;
-        if(e.key.length === 1) {
-            const target = state.currentList[state.currentIndex][input.value.length];
-            if(e.key !== target) {
-                e.preventDefault();
-                playErrorEffect();
-            }
-        }
-    });
-
     input.addEventListener('keypress', (e) => {
         if(e.key === 'Enter' && state.active) validate();
     });
+}
+
+export function startMode(diff) {
+    UI.toggleSidebar();
+    state.active = true;
+    state.currentIndex = 0;
+    state.score = 0;
+    state.currentList = [...dict[diff]].sort(() => Math.random() - 0.5);
+    document.getElementById('home-logo').style.display = 'none';
+    document.getElementById('word-area').style.display = 'block';
+    render();
+    document.getElementById('input-box').focus();
 }
 
 function render() {
@@ -42,50 +42,18 @@ function render() {
     let html = "";
     for(let i=0; i<word.length; i++) {
         let className = userIn[i] === undefined ? "" : (userIn[i] === word[i] ? "char-correct" : "char-wrong");
-        let content = userIn[i] !== undefined ? userIn[i] : (state.testMode ? "&nbsp;" : word[i]);
-        html += `<div class="char-box"><span class="${className}">${content}</span></div>`;
+        html += `<div class="char-box"><span class="${className}">${userIn[i] || word[i]}</span></div>`;
     }
     document.getElementById('word-display').innerHTML = html;
-    document.getElementById('translation-display').innerText = dictionary[word] || dictionary[word.toLowerCase()] || "(自定義)";
+    document.getElementById('translation-display').innerText = dictionary[word] || dictionary[word.toLowerCase()] || "";
 }
 
 function validate() {
-    const target = state.currentList[state.currentIndex];
-    const val = document.getElementById('input-box').value.trim();
-    if(val === target) {
-        state.score++; state.currentIndex++;
+    if(document.getElementById('input-box').value.trim() === state.currentList[state.currentIndex]) {
+        state.score++;
+        state.currentIndex++;
         document.getElementById('input-box').value = "";
         if(state.currentIndex < state.currentList.length) render();
-        else finish();
-    } else {
-        playErrorEffect();
+        else alert("挑戰完成！正確數：" + state.score);
     }
-}
-
-function playErrorEffect() {
-    const el = document.getElementById('word-display');
-    el.classList.remove('shake-error');
-    void el.offsetWidth;
-    el.classList.add('shake-error');
-}
-
-function finish() {
-    state.active = false; clearInterval(state.timer);
-    document.getElementById('result-layer').style.display = 'flex';
-    document.getElementById('result-detail').innerText = `完成！正確數：${state.score}`;
-}
-
-export function startRandom(diff, mins) {
-    state.mode = 'word'; state.subMode = 'random';
-    state.currentList = [...dict[diff]].sort(()=>Math.random()-0.5);
-    state.timeLeft = mins * 60;
-    actualStart();
-}
-
-function actualStart() {
-    UI.hideAllModals();
-    state.active = true; state.currentIndex = 0; state.score = 0;
-    document.getElementById('word-area').style.display = 'block';
-    render();
-    document.getElementById('input-box').focus();
 }
